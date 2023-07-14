@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "25936779408",
+    "project_id": "trackermoche-beb07",
+    "storage_bucket": "trackermoche-beb07.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25936779408:android:a4c36de624d5d91fe12015",
+        "android_client_info": {
+          "package_name": "com.example.tracker_moche"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "25936779408-v1qll4go8m8sth6lomgk2bogqe0t8crd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA4b6-MTEDLwz1B_cSkjaCv_mAM-O-7vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "25936779408-v1qll4go8m8sth6lomgk2bogqe0t8crd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
