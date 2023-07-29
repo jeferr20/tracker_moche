@@ -5,6 +5,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:tracker_moche/controllers/auth_controller.dart';
 import 'package:tracker_moche/pages/list_screen.dart';
 import 'package:tracker_moche/pages/map_screen.dart';
+import 'package:tracker_moche/pages/multas_screen.dart';
 import 'package:tracker_moche/pages/profile_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -20,7 +21,14 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final _advancedDrawerController = AdvancedDrawerController();
   String titulo = 'Mapa';
-  Widget _currentScreen =  MapScreen();
+  late Widget _currentScreen;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentScreen = MapScreen(isConductor: widget.isConductor);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AdvancedDrawer(
@@ -94,7 +102,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ListTile(
                     onTap: () {
                       setState(() {
-                        _currentScreen =  MapScreen();
+                        _currentScreen =
+                            MapScreen(isConductor: widget.isConductor);
                         titulo = 'Mapa';
                       });
                       _advancedDrawerController.hideDrawer();
@@ -120,6 +129,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     titleAlignment: ListTileTitleAlignment.center,
                     title: Text(
                       'Lista de conductores',
+                      style: GoogleFonts.poppins(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () {
+                      setState(() {
+                        _currentScreen = const MultasScreen();
+                        titulo = 'Multas';
+                      });
+                      _advancedDrawerController.hideDrawer();
+                    },
+                    leading: const Icon(Icons.article),
+                    titleAlignment: ListTileTitleAlignment.center,
+                    title: Text(
+                      'Multas',
                       style: GoogleFonts.poppins(
                         fontSize: 22,
                         fontWeight: FontWeight.w400,

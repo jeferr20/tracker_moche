@@ -39,18 +39,20 @@ class _MapScreenState extends State<MapScreen> {
           _controller.complete(controller);
         },
       ),
-      floatingActionButton: GetBuilder<LocationController>(
-        init: LocationController(),
-        builder: (controller) {
-          return CompartirUbiacionBoton(
-            isSharing: controller.isSharing,
-            onPressed: () {
-              controller.toggleSharing();
-              print(controller.isSharing);
-            },
-          );
-        },
-      ),
+      floatingActionButton: widget.isConductor
+          ? GetBuilder<LocationController>(
+              init: LocationController(),
+              builder: (controller) {
+                return CompartirUbiacionBoton(
+                  isSharing: controller.isSharing,
+                  onPressed: () {
+                    controller.shareLocation();
+                    print(controller.isSharing);
+                  },
+                );
+              },
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }

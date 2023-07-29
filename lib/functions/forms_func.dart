@@ -2,6 +2,13 @@ import 'package:email_validator/email_validator.dart';
 import 'package:password_strength/password_strength.dart';
 import '../components/snackbars.dart';
 
+validateEmail(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Correo vacío';
+  }
+  return null;
+}
+
 bool validarEmail(String value) {
   bool valido = EmailValidator.validate(value);
   if (!valido) {

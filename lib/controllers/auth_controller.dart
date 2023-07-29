@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tracker_moche/components/snackbars.dart';
+import 'package:tracker_moche/models/user_model.dart';
 import 'package:tracker_moche/pages/login_screen.dart';
 import 'package:tracker_moche/pages/welcome_screen.dart';
 
@@ -45,33 +46,28 @@ class AuthController extends GetxController {
     }
   }
 
-  Future addDatos(
-      String email, nombres, apellidos, dni, celular, bool esConductor) async {
+  Future addDatos(Usuario user) async {
     await FirebaseFirestore.instance.collection('usuarios').add({
-      'correo': email,
-      'nombres': nombres,
-      'apellidos': apellidos,
-      'dni': dni,
-      'celular': celular,
-      'tipo': esConductor ? 'Conductor' : 'Usuario',
+      'correo': user.email,
+      'nombres': user.nombres,
+      'apellidos': user.apellidos,
+      'dni': user.dni,
+      'celular': user.celular,
+      'tipo': user.isConductor ? 'Conductor' : 'Usuario',
     });
   }
 
   void registrarUsuario(
-    String email,
-    password,
+    Usuario user,
+    String password,
     confirmpassword,
-    nombres,
-    apellidos,
-    dni,
-    celular,
   ) async {
     try {
       if (passwordConfirmed(password, confirmpassword)) {
-        bool esConductor = await verificarConductor(dni);
+        user.isConductor = await verificarConductor(user.dni);
         await auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        addDatos(email, nombres, apellidos, dni, celular, esConductor);
+            email: user.email, password: password);
+        addDatos(user);
       } else {
         snackPasswordDistintas();
       }

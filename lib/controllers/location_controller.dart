@@ -1,79 +1,56 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'dart:async';
+
 import 'package:geolocator/geolocator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationController extends GetxController {
-  Position? _currentPosition;
-  Position? get currentPosition => _currentPosition;
-  bool _isSharing = false;
-  bool get isSharing => _isSharing;
+  late bool isSharing;
+  late StreamSubscription<Position> positionStreamSubscription;
 
   @override
   void onInit() {
     super.onInit();
-    initializeFirebase();
-    fetchLocation();
+    isSharing = false;
   }
 
-  Future<void> initializeFirebase() async {
-    await Firebase.initializeApp();
-  }
-
-  Future<void> fetchLocation() async {
-    try {
-      var geolocationStatus = await Geolocator.checkPermission();
-      if (geolocationStatus == LocationPermission.denied) {
-        geolocationStatus = await Geolocator.requestPermission();
-      }
-
-      if (geolocationStatus == LocationPermission.denied ||
-          geolocationStatus == LocationPermission.deniedForever) {
-        // Manejar el permiso denegado
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-
-      _currentPosition = position;
-      print(_currentPosition);
-      if (_isSharing) {
-        // Guardar la ubicación en Cloud Firestore solo si se está compartiendo
-        await saveLocationToFirestore(position.latitude, position.longitude);
-      }
-
-      update(); // Actualizar el estado del controlador
-    } catch (e) {
-      // Manejar cualquier error que pueda ocurrir
-    }
-  }
-
-  void toggleSharing() {
-    _isSharing = !_isSharing;
-    if (_isSharing) {
-      // Comenzar a compartir la ubicación del usuario
-      fetchLocation();
-    } else {
-      // Dejar de compartir la ubicación del usuario
-      // Quitar la ubicación del controlador
-      _currentPosition = null;
-      update(); // Actualizar el estado del controlador
-    }
+  Future<void> toggleSharing() async {
+    isSharing = !isSharing;
+    update();
   }
 
   Future<void> saveLocationToFirestore(
-      double latitude, double longitude) async {
+      Position position, String userEmail) async {
     try {
-      final collectionRef =
-          FirebaseFirestore.instance.collection('ubicacionUsuarios');
-      await collectionRef.add({
-        'latitude': latitude,
-        'longitude': longitude,
-        'timestamp': FieldValue.serverTimestamp(),
+      await FirebaseFirestore.instance
+          .collection('ubicaciones')
+          .doc(userEmail)
+          .set({
+        'latitud': position.latitude,
+        'longitud': position.longitude,
       });
-    } catch (e) {
-      // Manejar cualquier error al guardar la ubicación en Firestore
+    } catch (error) {
+      print('Error al guardar la ubicación en Firestore: $error');
     }
+  }
+
+  Future<void> shareLocation() async {
+    if (isSharing) return;
+    // Obtener la ubicación actual
+    // Obtener el correo electrónico del usuario actual
+    String? userEmail = FirebaseAuth.instance.currentUser?.email;
+
+    if (userEmail == null) return; // Verificar si el usuario está autenticado
+
+    // Suscribirse a las actualizaciones de posición
+    positionStreamSubscription =
+        Geolocator.getPositionStream().listen((Position position) {
+      // Guardar la ubicación en Firestore con el nombre del documento como el correo electrónico
+      saveLocationToFirestore(position, userEmail);
+    });
+
+    toggleSharing();
   }
 }

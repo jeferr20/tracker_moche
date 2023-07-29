@@ -7,14 +7,15 @@ class TextfieldCustom extends StatefulWidget {
   final String hintText;
   final IconData prefixIcon;
   final TextEditingController controller;
-  final Function(String)? onSubmitted;
-  const TextfieldCustom(
-      {super.key,
-      required this.keyTpye,
-      required this.hintText,
-      required this.prefixIcon,
-      required this.controller,
-      this.onSubmitted});
+  final String? Function(String?)? validacion;
+  const TextfieldCustom({
+    super.key,
+    required this.keyTpye,
+    required this.hintText,
+    required this.prefixIcon,
+    required this.controller,
+    this.validacion,
+  });
 
   @override
   State<TextfieldCustom> createState() => _TextfieldCustomState();
@@ -25,7 +26,7 @@ class _TextfieldCustomState extends State<TextfieldCustom> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 10),
-      child: TextField(
+      child: TextFormField(
         controller: widget.controller,
         keyboardType: widget.keyTpye,
         cursorColor: HexColor("#303030"),
@@ -50,7 +51,7 @@ class _TextfieldCustomState extends State<TextfieldCustom> {
           fontSize: 15,
           color: HexColor("#303030"),
         ),
-        onSubmitted: widget.onSubmitted,
+        validator: widget.validacion,
       ),
     );
   }
@@ -59,12 +60,13 @@ class _TextfieldCustomState extends State<TextfieldCustom> {
 class TextFieldPasswordCustom extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
-  final Function(String)? onSubmitted;
-  const TextFieldPasswordCustom(
-      {super.key,
-      required this.hintText,
-      required this.controller,
-      this.onSubmitted});
+  final String? Function(String?)? validacion;
+  const TextFieldPasswordCustom({
+    super.key,
+    required this.hintText,
+    required this.controller,
+    this.validacion,
+  });
 
   @override
   State<TextFieldPasswordCustom> createState() =>
@@ -77,7 +79,7 @@ class _TextFieldPasswordCustomState extends State<TextFieldPasswordCustom> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 10),
-      child: TextField(
+      child: TextFormField(
         controller: widget.controller,
         keyboardType: TextInputType.visiblePassword,
         cursorColor: HexColor("#303030"),
@@ -113,7 +115,7 @@ class _TextFieldPasswordCustomState extends State<TextFieldPasswordCustom> {
           fontSize: 15,
           color: HexColor("#303030"),
         ),
-        onSubmitted: widget.onSubmitted,
+        validator: widget.validacion,
       ),
     );
   }
